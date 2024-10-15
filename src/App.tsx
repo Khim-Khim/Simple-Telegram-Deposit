@@ -9,6 +9,41 @@ import useMetaMask from "./hooks/useMetaMask";
 import { convertHexToNumber } from "./utils/web3";
 import useStoreWallet from "./hooks/useStoreWallet";
 
+import { createAppKit } from '@reown/appkit/react'
+import { EthersAdapter } from '@reown/appkit-adapter-ethers'
+import { useAppKitAccount } from '@reown/appkit/react'
+
+import { arbitrum, mainnet, AppKitNetwork } from '@reown/appkit/networks'
+
+
+const projectId = '40cfb7ccf9b42f2c2cf5bd4756da418f'
+if (!projectId) {
+  throw new Error('VITE_PROJECT_ID is not set')
+}
+
+// 2. Create a metadata object - optional
+const metadata = {
+  name: 'AppKit',
+  description: 'AppKit Example',
+  url: 'https://reown.com', // origin must match your domain & subdomain
+  icons: ['https://avatars.githubusercontent.com/u/179229932']
+}
+
+// 3. Set the networks
+const networks: [AppKitNetwork, ...AppKitNetwork[]] = [arbitrum, mainnet];
+
+
+// 4. Create a AppKit instance
+const modal = createAppKit({
+  adapters: [new EthersAdapter()],
+  networks,
+  metadata,
+  projectId,
+  features: {
+    analytics: true 
+  }
+})
+
 function App() {
   const {
     onConnectDisconnect,
@@ -19,14 +54,20 @@ function App() {
     onChangeInput,
     dataTransaction,
   } = useMetaMask();
-  const metaMaskData = useStoreWallet((state: any) => state?.metaMaskData);
-  const { balance, wallet } = metaMaskData;
+  const { address, caipAddress, isConnected } = useAppKitAccount();
+  
+  // const metaMaskData = useStoreWallet((state: any) => state?.metaMaskData);
+
+  const data = caipAddress?.split(':');
+  
+  // const { balance, wallet } = metaMaskData;
+
 
   return (
     <>
       <Layout
         onConnectDisconnect={onConnectDisconnect}
-        isAccountConnected={isAccountConnected}
+        isAccountConnected={isConnected}
       >
         <div className="flex flex-col items-center lg:items-stretch lg:flex-row">
           <div className="shadow-md py-6 lg:py-10 px-4 lg:px-9 rounded-lg bg-white bg-opacity-50 border-2 border-white w-10/12 lg:w-auto">
@@ -54,7 +95,7 @@ function App() {
               {isDisabledButtonSendEth && (
                 <span className="text-xs italic text-red-500 mt-2">
                   *{" "}
-                  {isAccountConnected
+                  {isConnected
                     ? "Button disable because the form has not been filled in completely."
                     : "Connect to your wallet before transfer, you can click Connect button."}
                 </span>
@@ -62,13 +103,13 @@ function App() {
               <ToastContainer className="!mb-10 !w-[460px]" />
             </div>
           </div>
-          {isAccountConnected && (
+          {isConnected && (
             <div className="shadow-md py-6 lg:py-10 px-4 lg:px-8 rounded-lg bg-white bg-opacity-50 border-2 border-white mt-3 lg:mt-0 lg:ml-5 w-10/12 lg:w-auto">
-              <InfoSection label="Wallet Adress" value={wallet || ""} />
-              <InfoSection
+              <InfoSection label="Wallet Adress" value={address || ""} />
+              {/* <InfoSection
                 label="Balance"
                 value={`${convertHexToNumber(balance) || ""} ADIL`}
-              />
+              /> */}
             </div>
           )}
         </div>

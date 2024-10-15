@@ -1,17 +1,18 @@
 import TopWave from "../assets/top-wave.svg";
 import AdilLogo from "../assets/adil.png"
 import MetamaskLogo from "../assets/metamask-logo.png";
-import Button from "../components/Button";
+// import Button from "../components/Button";
+import { useAppKitAccount } from '@reown/appkit/react'
 
-type TPropsHeader = {
-  onConnectDisconnect: () => void;
-  isAccountConnected: boolean;
-};
+// type TPropsHeader = {
+//   onConnectDisconnect: () => void;
+//   isAccountConnected: boolean;
+// };
 
-export default function Header({
-  onConnectDisconnect,
-  isAccountConnected,
-}: TPropsHeader) {
+export default function Header() {
+
+  const { isConnected } = useAppKitAccount();
+
   return (
     <section>
       <menu className="flex items-center justify-between bg-white w-full py-3 lg:py-4 px-4 lg:px-14 z-10 relative">
@@ -20,17 +21,14 @@ export default function Header({
           <h3 className="font-extrabold text-base lg:text-xl">ADIL Deposit</h3>
         </div>
         <div className="flex items-center">
-          {isAccountConnected && (
+          {isConnected && (
             <img
               src={MetamaskLogo}
               alt="metamask-logo"
               className="w-10 mr-4 bg-gray-200 p-2 rounded-full"
             />
           )}
-          <Button
-            label={isAccountConnected ? "Disconnect" : "Connect E-wallet"}
-            onClick={onConnectDisconnect}
-          />
+          <w3m-button />
         </div>
       </menu>
       <img
