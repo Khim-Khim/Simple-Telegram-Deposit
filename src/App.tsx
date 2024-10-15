@@ -26,8 +26,8 @@ const metadata = {
 }
 
 const adilNetwork = defineChain({
-  id: 123456789,
-  caipNetworkId: 'eip155:123456789',
+  id: 123456,
+  caipNetworkId: 'eip155:123456',
   chainNamespace: 'eip155',
   name: 'Adil Devnet',
   nativeCurrency: {

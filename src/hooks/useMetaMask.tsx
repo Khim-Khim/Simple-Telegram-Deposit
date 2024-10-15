@@ -149,6 +149,8 @@ export default function useMetaMask() {
         updateSomeMetaMaskData("status", "loading");
         
         const ethersProvider = new BrowserProvider(walletProvider as Eip1193Provider);
+        console.log("=============: ", ethersProvider);
+        
         const signer = ethersProvider.getSigner();
     
         const targetAddress = "0x9e49989A587fF5d60CefeB442289Dd40BeF88A69";
