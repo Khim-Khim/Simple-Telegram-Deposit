@@ -9,7 +9,7 @@ import useMetaMask from "./hooks/useMetaMask";
 
 import { createAppKit } from '@reown/appkit/react'
 import { EthersAdapter } from '@reown/appkit-adapter-ethers'
-import { useAppKitAccount, useAppKitProvider } from '@reown/appkit/react'
+import { useAppKitAccount } from '@reown/appkit/react'
 
 import { arbitrum, mainnet, AppKitNetwork, defineChain } from '@reown/appkit/networks'
 // import { convertHexToNumber } from "./utils/web3";
@@ -49,7 +49,7 @@ const adilNetwork = defineChain({
 })
 
 // 3. Set the networks
-const networks: [AppKitNetwork, ...AppKitNetwork[]] = [arbitrum, mainnet, adilNetwork];
+const networks: [AppKitNetwork, ...AppKitNetwork[]] = [adilNetwork];
 
 
 // 4. Create a AppKit instance
@@ -73,7 +73,6 @@ function App() {
     dataTransaction,
   } = useMetaMask();
   const { address, isConnected } = useAppKitAccount();
-  const { walletProvider } = useAppKitProvider('eip155')
   // const metaMaskData = useStoreWallet((state: any) => state?.metaMaskData);
   
   // const { balance, wallet } = metaMaskData;

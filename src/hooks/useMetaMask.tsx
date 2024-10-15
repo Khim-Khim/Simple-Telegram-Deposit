@@ -2,9 +2,8 @@ import { useCallback, useEffect, useState } from "react";
 import { initiateMetaMaskSDK } from "../lib/MetaMaskSdk";
 import useStoreWallet from "./useStoreWallet";
 import { openToast } from "../lib/Toast";
-import { convertNumberToHex } from "../utils/web3";
 import { useAppKitProvider } from "@reown/appkit/react";
-import { BrowserProvider, Contract, formatUnits, Eip1193Provider, parseUnits } from 'ethers'
+import { BrowserProvider, Eip1193Provider, parseUnits } from 'ethers'
 
 
 export default function useMetaMask() {
