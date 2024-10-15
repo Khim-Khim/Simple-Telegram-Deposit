@@ -10,7 +10,6 @@ import { useAppKitAccount } from '@reown/appkit/react'
 // };
 
 export default function Header() {
-
   const { isConnected } = useAppKitAccount();
 
   return (

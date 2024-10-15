@@ -6,20 +6,16 @@ import Button from "./components/Button";
 import Input from "./components/Input";
 
 import useMetaMask from "./hooks/useMetaMask";
-import { convertHexToNumber } from "./utils/web3";
-import useStoreWallet from "./hooks/useStoreWallet";
 
 import { createAppKit } from '@reown/appkit/react'
 import { EthersAdapter } from '@reown/appkit-adapter-ethers'
-import { useAppKitAccount } from '@reown/appkit/react'
+import { useAppKitAccount, useAppKitProvider } from '@reown/appkit/react'
 
-import { arbitrum, mainnet, AppKitNetwork } from '@reown/appkit/networks'
+import { arbitrum, mainnet, AppKitNetwork, defineChain } from '@reown/appkit/networks'
+// import { convertHexToNumber } from "./utils/web3";
 
 
 const projectId = '40cfb7ccf9b42f2c2cf5bd4756da418f'
-if (!projectId) {
-  throw new Error('VITE_PROJECT_ID is not set')
-}
 
 // 2. Create a metadata object - optional
 const metadata = {
@@ -29,12 +25,35 @@ const metadata = {
   icons: ['https://avatars.githubusercontent.com/u/179229932']
 }
 
+const adilNetwork = defineChain({
+  id: 123456789,
+  caipNetworkId: 'eip155:123456789',
+  chainNamespace: 'eip155',
+  name: 'Adil Devnet',
+  nativeCurrency: {
+    decimals: 18,
+    name: 'ADIL',
+    symbol: 'ADIL',
+  },
+  rpcUrls: {
+    default: {
+      http: ['https://devnet.adilchain-rpc.io'],
+    },
+  },
+  blockExplorers: {
+    default: { name: 'Adil Explorer', url: 'https://devnet.adilchain-scan.io' },
+  },
+  contracts: {
+    // Add the contracts here
+  }
+})
+
 // 3. Set the networks
-const networks: [AppKitNetwork, ...AppKitNetwork[]] = [arbitrum, mainnet];
+const networks: [AppKitNetwork, ...AppKitNetwork[]] = [arbitrum, mainnet, adilNetwork];
 
 
 // 4. Create a AppKit instance
-const modal = createAppKit({
+createAppKit({
   adapters: [new EthersAdapter()],
   networks,
   metadata,
@@ -47,18 +66,15 @@ const modal = createAppKit({
 function App() {
   const {
     onConnectDisconnect,
-    isAccountConnected,
     isLoading,
     isDisabledButtonSendEth,
     onSendTransaction,
     onChangeInput,
     dataTransaction,
   } = useMetaMask();
-  const { address, caipAddress, isConnected } = useAppKitAccount();
-  
+  const { address, isConnected } = useAppKitAccount();
+  const { walletProvider } = useAppKitProvider('eip155')
   // const metaMaskData = useStoreWallet((state: any) => state?.metaMaskData);
-
-  const data = caipAddress?.split(':');
   
   // const { balance, wallet } = metaMaskData;
 

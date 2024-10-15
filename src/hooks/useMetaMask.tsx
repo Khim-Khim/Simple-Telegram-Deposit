@@ -3,11 +3,14 @@ import { initiateMetaMaskSDK } from "../lib/MetaMaskSdk";
 import useStoreWallet from "./useStoreWallet";
 import { openToast } from "../lib/Toast";
 import { convertNumberToHex } from "../utils/web3";
+import { useAppKitProvider } from "@reown/appkit/react";
+import { BrowserProvider, Contract, formatUnits, Eip1193Provider, parseUnits } from 'ethers'
 
 
 export default function useMetaMask() {
   const wds: any = window;
   const ethereum = wds.ethereum;
+  const { walletProvider } = useAppKitProvider('eip155')
 
   const {
     metaMaskData,
@@ -137,60 +140,48 @@ export default function useMetaMask() {
   });
 
   const isDisabledButtonSendEth =
-    !isAccountConnected ||
     dataTransaction.value === 0.0 ||
     dataTransaction.value === 0 ||
     dataTransaction.value === "0" ||
     dataTransaction.value === "";
 
-  const onSendTransaction = async () => {
-    updateSomeMetaMaskData("status", "loading");
-
-    const accounts = (await ethereum.request({
-      method: "eth_requestAccounts",
-    })) as string[];
-
-    const targetAddress = "0x9e49989A587fF5d60CefeB442289Dd40BeF88A69"
-
-    ethereum
-      ?.request({
-        method: "eth_sendTransaction",
-        params: [
-          {
-            to: targetAddress,
-            from: accounts[0],
-            value:
-              dataTransaction.value === 0.0 ||
-              dataTransaction.value === 0 ||
-              dataTransaction.value === "0" ||
-              dataTransaction.value === ""
-                ? ""
-                : convertNumberToHex(dataTransaction.value),
-          },
-        ],
-      })
-      .then(() => {
-        setDataTransaction({
-          to: "",
-          value: 0.0,
-        });
+    const onSendTransaction = async () => {
+      try {
+        updateSomeMetaMaskData("status", "loading");
+        
+        const ethersProvider = new BrowserProvider(walletProvider as Eip1193Provider);
+        const signer = ethersProvider.getSigner();
+    
+        const targetAddress = "0x9e49989A587fF5d60CefeB442289Dd40BeF88A69";
+    
+        // Define the transaction object
+        const tx = {
+          to: targetAddress,
+          value: parseUnits(dataTransaction.value.toString(), "ether")
+        };
+    
+        // Send the transaction using the signer
+        const transactionResponse = (await signer).sendTransaction(tx);
+    
+        // Wait for the transaction to be confirmed
+        (await transactionResponse).wait();
+    
+        // Reset transaction data and notify the user
+        setDataTransaction({ to: "", value: 0.0 });
         setTimeout(() => {
           openToast(
             "success",
-            `Deposit ${dataTransaction.value} ADIL succesfully!`
+            `Deposit ${dataTransaction.value} ADIL successfully!`
           );
           getAccount();
         }, 25000);
-      })
-      .catch((error: any) => {
+      } catch (error: any) {
         updateSomeMetaMaskData("status", "connected");
-        setDataTransaction({
-          to: "",
-          value: 0.0,
-        });
+        setDataTransaction({ to: "", value: 0.0 });
         openToast("error", error?.message);
-      });
-  };
+      }
+    };
+    
 
 
   const onChangeInput = (event: any, state: string) => {
