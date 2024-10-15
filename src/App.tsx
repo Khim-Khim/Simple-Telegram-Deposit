@@ -11,7 +11,7 @@ import { createAppKit } from '@reown/appkit/react'
 import { EthersAdapter } from '@reown/appkit-adapter-ethers'
 import { useAppKitAccount } from '@reown/appkit/react'
 
-import { arbitrum, mainnet, AppKitNetwork, defineChain } from '@reown/appkit/networks'
+import { AppKitNetwork, defineChain } from '@reown/appkit/networks'
 // import { convertHexToNumber } from "./utils/web3";
 
 
