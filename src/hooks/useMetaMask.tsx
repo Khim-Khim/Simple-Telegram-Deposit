@@ -11,6 +11,8 @@ export default function useMetaMask() {
   const ethereum = wds.ethereum;
   const { walletProvider } = useAppKitProvider('eip155')
 
+  console.log(walletProvider);
+  
   const {
     metaMaskData,
     setMetaMaskData,
